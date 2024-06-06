@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Bikes</title>
+    <link rel="stylesheet" href="/bikes.css" />
+  </head>
+  <body>
+    <header class="login-header">
+      <h1>Bikes</h1>
+    </header>
+    <div class="container">
+      <div class="bike-container">
+        <div id="bike-grid" class="bike-grid">
+          <% bikes.forEach(function(bike) { %>
+
+          <a
+            id="<%= bike._id %>"
+            href="/bikes/<%= bike._id %>"
+            class="bike-item"
+          >
+            <article id="<%= bike._id %>" onclick="showBike(event)">
+              <figure id="<%= bike._id %>">
+                <img id="<%= bike._id %>" src="<%= bike.image %>" alt="" />
+              </figure>
+              <h2 id="<%= bike._id %>"><%= bike.name %></h2>
+            </article>
+          </a>
+          <% }); %>
+        </div>
+      </div>
+      <div id="bike-data" class="bike-data">
+        <% if (typeof data !== 'undefined') { %>
+        <article id="<%= data._id %>">
+          <div class="data-bike-image">
+            <figure>
+              <img src="<%= data.image %>" alt="<%= data.name %>" />
+            </figure>
+          </div>
+          <div class="data-bike-info">
+            <p class="p-item">
+              <span class="p-span-item">Name:</span> <%= data.name %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Price:</span> $<%= data.price %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Description:</span> <%= data.description
+              %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Bike Type:</span> <%= data.bikeType %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Age Range:</span> <%= data.ageRange %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Brand:</span> <%= data.brand %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Number of Speeds:</span> <%=
+              data.numberOfSpeeds %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Color:</span> <%= data.color %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Wheel Size:</span> <%= data.wheelSize %>
+            </p>
+            <p class="p-item">
+              <span class="p-span-item">Model Number:</span> <%=
+              data.modelNumber %>
+            </p>
+          </div>
+        </article>
+        <% } %>
+      </div>
+    </div>
+    <script src="/bikes.js"></script>
+  </body>
+</html>

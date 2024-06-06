@@ -26,6 +26,7 @@ async function login(e) {
 }
 
 async function signup(e) {
+  console.log("fsldjf;dsjf;sdaljf;sl");
   e.preventDefault();
   const email = document.getElementById("email").value;
   const username = document.getElementById("username").value;

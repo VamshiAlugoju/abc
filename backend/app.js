@@ -11,18 +11,21 @@ import bikes from "./utils/data.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import bodyParser from "body-parser";
+import ejs from "ejs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
+app.set("view engine", "ejs");
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors({ origin: "*" }));
 const port = 3000;
 
 app.get("/", async (req, res) => {
-  console.log();
-  res.sendFile(path.join(__dirname, "/pages", "login.html"));
+  res.render("index.ejs", { user: { name: "vamshi" } });
 });
 
 app.post("/bikes", verifyToken, async (req, res) => {
@@ -38,9 +41,20 @@ app.post("/bikes", verifyToken, async (req, res) => {
     res.status(500).json({ error: err });
   }
 });
+
+app.get("/signup", async (req, res) => {
+  return res.render("pages/signup.ejs");
+});
+app.get("/login", async (req, res) => {
+  return res.render("pages/login.ejs");
+});
+
 app.post("/signup", async (req, res) => {
   try {
     const { email, username } = req.body;
+    console.log("params", req.params);
+    console.log("query", req.query);
+    console.log("body", req.body);
     if (!email || !username) {
       res.status(400).json({ error: "Email and username are required" });
       return;
@@ -51,11 +65,12 @@ app.post("/signup", async (req, res) => {
     }
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      res.status(409).json({ error: "User already exists please login" });
-      return;
+      return res
+        .status(400)
+        .json({ error: "user already exists", user: existingUser.toJSON() });
     }
     const newUser = await User.create(req.body);
-    res.status(200).json(newUser);
+    res.redirect("login");
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err });
@@ -80,30 +95,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/bikes/:id", verifyToken, async (req, res) => {
+app.get("/bikes/:id", async (req, res) => {
   try {
     const bikeId = req.params.id;
     const bike = await Bike.findById(bikeId);
+    const bikes = await Bike.find();
+
     if (!bike) {
       res.status(404).json({ error: "Bike not found" });
     } else {
-      res.status(200).json(bike);
+      return res.render("pages/bikes.ejs", { bikes, data: bike.toJSON() });
     }
   } catch (err) {
     res.status(500).json({ error: err });
   }
 });
 
-app.get("/bikes", verifyToken, async (req, res) => {
+app.get("/bikes", async (req, res) => {
   try {
     const bikes = await Bike.find();
-    res.status(200).json(bikes);
+    return res.render("pages/bikes.ejs", { bikes });
   } catch (err) {
     res.status(500).json({ error: err });
   }
 });
 
-app.post("/seed", verifyToken, async (req, res) => {
+app.get("/seed", async (req, res) => {
   try {
     const data = await Bike.find();
     if (data.length >= bikes.length) {
