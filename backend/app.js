@@ -25,7 +25,7 @@ app.use(cors({ origin: "*" }));
 const port = 3000;
 
 app.get("/", async (req, res) => {
-  res.render("index.ejs", { user: { name: "vamshi" } });
+  return res.redirect("login");
 });
 
 app.post("/bikes", verifyToken, async (req, res) => {
@@ -89,7 +89,7 @@ app.post("/login", async (req, res) => {
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
     );
-    res.status(200).json({ token: token });
+    res.redirect("bikes");
   } catch (err) {
     res.status(500).json({ error: err });
   }
@@ -136,7 +136,7 @@ app.get("/seed", async (req, res) => {
   }
 });
 
-app.post("/send-email", verifyToken, async (req, res) => {
+app.post("/send-email", async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.body.userId });
 
