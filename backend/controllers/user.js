@@ -13,34 +13,32 @@ import nodemailer from "nodemailer";
 //   });
 
 export const getSignup = async (req, res) => {
-  return res.render("pages/signup.ejs");
+  return res.render("pages/signup.ejs", { error: null });
 };
 
 export const getlogin = async (req, res) => {
-  return res.render("pages/login.ejs");
+  return res.render("pages/login.ejs", { error: null });
 };
 
 export const signup = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, password } = req.body;
     console.log("params", req.params);
     console.log("query", req.query);
     console.log("body", req.body);
-    if (!email || !username) {
-      res.status(400).json({ error: "Email and username are required" });
-      return;
+    if (!email || !password) {
+      return res.render("pages/signup.ejs", {
+        error: "Email and password are required",
+      });
     }
-    if (!validator().isEmail(email)) {
-      res.status(400).json({ error: "Invalid email" });
-      return;
-    }
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+
+    const existingUser = await User.findOne({ email: email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ error: "user already exists", user: existingUser.toJSON() });
+      return res.render("pages/signup.ejs", {
+        error: "user already exists",
+      });
     }
-    const newUser = await User.create(req.body);
+    const newUser = await User.create({ email, password });
     res.redirect("login");
   } catch (err) {
     console.log(err);
@@ -51,18 +49,21 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.render("pages/login.ejs", {
+        error: "Invalid email or password",
+      });
     }
     if (user.password !== password) {
-      return res.status(400).json({ error: "incorrect password" });
+      return res.render("pages/login.ejs", { error: "Incorrect password" });
     }
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
     );
+    res.cookie("token", token, { httpOnly: true });
     res.redirect("/bikes");
   } catch (err) {
     res.status(500).json({ error: err });

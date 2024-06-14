@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
+  const token = req.cookies.token;
+
   if (!token) {
     return res.status(401).json({ error: "Authorization token is missing" });
   }

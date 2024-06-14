@@ -14,6 +14,7 @@ import { dirname } from "path";
 import bodyParser from "body-parser";
 import userRoutes from "./Routes/userRoutes.js";
 import bikeRoutes from "./Routes/bikeRoutes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.set("view engine", "ejs");
@@ -21,10 +22,12 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors({ origin: "*" }));
+app.use(cookieParser());
+
 const port = 3000;
 
 app.use("/user", userRoutes);
-app.use("/bikes", bikeRoutes);
+app.use("/bikes", verifyToken, bikeRoutes);
 
 app.get("/", async (req, res) => {
   return res.redirect("user/login");
