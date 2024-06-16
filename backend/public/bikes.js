@@ -94,3 +94,13 @@ async function showBike(e) {
 }
 
 window.addEventListener("load", renderBikes);
+console.log("hwllflsdjf;sfjsf")
+  document.getElementById("sendMailBtn").addEventListener("click" ,async (event)=>{
+    console.log("clicked")
+    try{
+         const response = await fetch("/user/sendMail" , {method : "POST"});
+         console.log(response.body)
+    }catch(err){
+      console.log(err)
+    }
+  }) 

@@ -1,16 +1,16 @@
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-// const transporter = nodemailer.createTransport({
-//     service: "Gmail",
-//     host: "smtp.gmail.com",
-//     port: 465,
-//     secure: true,
-//     auth: {
-//       user: "your_email@gmail.com",
-//       pass: "your_app_password",
-//     },
-//   });
+const transporter = nodemailer.createTransport({
+    // service: "Gmail",
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "madilyn34@ethereal.email",
+      pass: "Esh7wCXPVYuCTxXQNW",
+    },
+  });
 
 export const getSignup = async (req, res) => {
   return res.render("pages/signup.ejs", { error: null });
@@ -72,12 +72,12 @@ export const login = async (req, res) => {
 
 export const sendMail = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.body.userId });
+    // const user = await User.findOne({ _id: req.body.userId });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    await sendEmail(user.email);
+    // if (!user) {
+    //   return res.status(404).json({ error: "User not found" });
+    // }
+    await sendEmail('alugojuvamshi@gmail.com');
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
     console.log(err);
@@ -85,10 +85,21 @@ export const sendMail = async (req, res) => {
   }
 };
 
-async function sendEmail(email) {
+export async function sendEmail(email) {
   try {
+    const mailoptions = {
+      from : 'madilyn34@ethereal.email',
+       to : email,
+       subject:"abc",
+       text : "llsls"
+    }
+
+    await transporter.sendMail(mailoptions);
+    return Promise.resolve()
   } catch (err) {
     console.log(err);
     return Promise.resolve(err);
   }
 }
+
+
