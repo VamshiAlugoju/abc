@@ -72,11 +72,12 @@ export const login = async (req, res) => {
 
 export const sendMail = async (req, res) => {
   try {
-    // const user = await User.findOne({ _id: req.body.userId });
-
-    // if (!user) {
-    //   return res.status(404).json({ error: "User not found" });
-    // }
+    const userId = req.userId
+    const user = await User.findOne({ _id: userId });
+  
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     await sendEmail('alugojuvamshi@gmail.com');
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
@@ -98,7 +99,7 @@ export async function sendEmail(email) {
     return Promise.resolve()
   } catch (err) {
     console.log(err);
-    return Promise.resolve(err);
+    return Promise.reject(err);
   }
 }
 

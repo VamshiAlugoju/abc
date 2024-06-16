@@ -100,6 +100,7 @@ console.log("hwllflsdjf;sfjsf")
     try{
          const response = await fetch("/user/sendMail" , {method : "POST"});
          console.log(response.body)
+         alert("mail sent")
     }catch(err){
       console.log(err)
     }
